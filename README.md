@@ -37,7 +37,7 @@ jobs:
           name: "Install Dependencies"
           command: composer install -n --prefer-dist
           
-     - run:
+      - run:
           name: "Generate Application key"
           command: php artisan key:generate     
             
@@ -57,8 +57,8 @@ jobs:
           username: $DOCKERHUB_USERNAME # define inside "credentials" context
           password: $DOCKERHUB_PASSWORD # define inside "credentials" context
     steps:
-      - run: touch storage/test.sqlite
-      - run: ./vendor/bin/phpunit tests/Unit # run can be wrote like using shorthand
+      - run: touch storage/database.sqlite
+      - run: ./vendor/bin/phpunit tests/Unit # run can write using shortfont 
       
       - store_test_results: 
           path: /tmp/test-reports  
