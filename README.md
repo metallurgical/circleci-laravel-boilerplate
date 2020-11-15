@@ -1,5 +1,5 @@
 # circleci-laravel-boilerplate
-CircleCI CI/CD boilerplate for Laravel or PHP application. Too lazy to write the same thing when creating new project.
+CircleCI CI/CD boilerplate for Laravel or PHP application. Modify based on your application!
 
 # Config file
 `.circleci/config.yml`
