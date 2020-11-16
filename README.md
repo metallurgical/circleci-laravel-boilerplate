@@ -44,58 +44,41 @@ jobs:
           command: php artisan key:generate
       - run:
           name: "Run unit/feature testing"
-          command: php artisan test --testsuite=Feature
+          command: |
+            touch storage/testing.sqlite
+            php artisan migrate --env=testing --database=sqlite_testing --force
+            php artisan test --testsuite=Feature
       - store_test_results:
           path: /tmp/test-reports
-          
-  app-test: # 2nd Job
-    docker:
-      - image: circleci/php:7.4-node-browsers # dockerImage:version 
-        auth:
-          username: $DOCKERHUB_USERNAME # define inside "credentials" context
-          password: $DOCKERHUB_PASSWORD # define inside "credentials" context
-    steps:
-      - run: touch storage/database.sqlite
-      - run: ./vendor/bin/phpunit tests/Unit # run can write using shortfont 
       
-      - store_test_results: 
-          path: /tmp/test-reports  
-      
-  app-deploy #3rd Job
+  # 2nd Job -- Deploy. Trigger envoyer link. Have to use envoyer for atomic and 0 downtime deployment.
+  app-deploy:
     docker:
-      - image: circleci/php:7.4-node-browsers # dockerImage:version
+      - image: circleci/php:7.4-node-browsers
         auth:
-          username: $DOCKERHUB_USERNAME # define inside "credentials" context
-          password: $DOCKERHUB_PASSWORD # define inside "credentials" context
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD
     steps:
-      - run: curl <envoyer-endpoint> # trigger envoyer deploy
+      - run:
+          name: "Deploy to server"
+          command: |
+            echo "deploy call envoyer endpoint"
           
 workflows:
   version: 2
   my-workflow:
     jobs:
       - app-build:
-          context:
-            - credentials # created inside circleCI dasboard
           filters:
             branches:
               ignore: 
                 - /hotfix-.*/ # do not trigger pipeline if it was "hotfix" branch
             
-      - app-test:
-          context:
-            - credentials # created inside circleCI dasboard
-          requires:
-            - app-build # require "app-build" finish only able run this job
-            
       - app-deploy:
-          context:
-            - credentials # created inside circleCI dasboard
           requires:
             - app-build
-            - app-test # require "app-test" finish only able run this job
           filters:
             branches:
-              only: production # only trigger this job when branch checkout is "production"
+              only: production # only trigger this job(deploy) when branch checkout is "production"
             
  ```           
