@@ -8,47 +8,45 @@ CircleCI CI/CD boilerplate for Laravel or PHP application. Modify based on your 
 version: 2.1
 
 jobs:
-  app-build: # 1st job
+  # 1st Job -- Build docker container.
+  app-build:
     docker:
-      - image: dockerImage:version
+      - image: circleci/php:7.4-node-browsers
         auth:
-          username: $DOCKERHUB_USERNAME # was defined inside "credentials" context
-          password: $DOCKERHUB_PASSWORD # was defined inside "credentials" context
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD
+    working_directory: ~/laravel # directory where steps will run
     steps:
-      - checkout # get the branch's code, if we push branch "a", this command will checkout "a" branch. Checkout is more like download the code into circleCI server and checkout the branch. Must be present in build job basically.
-      
-      - run: # run can be wrote like this by specifying name
-          name: "Preparing environment dependencies"
+      - checkout
+      - run:
+          name: "Manage PHP dependencies, composer, etc"
           command: |
             sudo apt update
-            sudo docker-php-ext-install zip
-            
+            sudo apt install -y libsqlite3-dev zlib1g-dev
+            sudo docker-php-ext-install zip calendar exif pcntl
       - run:
-          name: "Create Environment file for testing"
+          name: "Create Environment file"
           command: |
-            mv .env.testing .env       
-          
-      - restore_cache: # restore the cache file
+            cp .env.example .env
+      - restore_cache:
           keys:
-            - v1-composer-{{checksum composer.json}} # find for this key
-            - v1-composer- # fallback to this key if above didnt found
-            
+            - v1-composer-{{checksum "composer.lock"}}
+            - v1-composer-
       - run:
-          name: "Install Dependencies"
+          name: "Install dependencies"
           command: composer install -n --prefer-dist
-          
+      - save_cache:
+          key: v1-composer-{{checksum "composer.lock"}}
+          paths:
+            - vendor
       - run:
-          name: "Generate Application key"
-          command: php artisan key:generate     
-            
-      - save_cache: # recache the cache file
-          key: v1-composer-{{checksum composer.lock}}
-          paths: # on which path to store this file
-            - /tmp
-            
-      - save_artifacts: # save build artifact later can be used to download from pipeline dashboard
-          path: /tmp/artifacts
-          destination: app-build
+          name: "Generate application key"
+          command: php artisan key:generate
+      - run:
+          name: "Run unit/feature testing"
+          command: php artisan test --testsuite=Feature
+      - store_test_results:
+          path: /tmp/test-reports
           
   app-test: # 2nd Job
     docker:
