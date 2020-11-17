@@ -6,6 +6,8 @@ CircleCI CI/CD boilerplate for Laravel or PHP application. Modify based on your 
 
 ```
 version: 2.1
+orbs:
+  slack: circleci/slack@4.1.1
 
 jobs:
   # 1st Job -- Build docker container.
@@ -22,12 +24,12 @@ jobs:
           name: "Manage PHP dependencies, composer, etc"
           command: |
             sudo apt update
-            sudo apt install -y libsqlite3-dev zlib1g-dev
-            sudo docker-php-ext-install zip calendar exif pcntl
+            sudo apt install -y libsqlite3-dev zlib1g-dev libmpc-dev
+            sudo docker-php-ext-install zip calendar exif pcntl gmp bcmath
       - run:
           name: "Create Environment file"
           command: |
-            cp .env.example .env
+            mv .env.example .env
       - restore_cache:
           keys:
             - v1-composer-{{checksum "composer.lock"}}
@@ -45,24 +47,29 @@ jobs:
       - run:
           name: "Run unit/feature testing"
           command: |
-            touch storage/testing.sqlite
-            php artisan migrate --env=testing --database=sqlite_testing --force
-            php artisan test --testsuite=Feature
+            vendor/bin/phpunit --stop-on-failure --stop-on-error --debug
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
       - store_test_results:
-          path: /tmp/test-reports
-      
+          path: test-reports
+
+
   # 2nd Job -- Deploy. Trigger envoyer link. Have to use envoyer for atomic and 0 downtime deployment.
   app-deploy:
     docker:
-      - image: circleci/php:7.4-node-browsers
+      - image: alpine:3.7
         auth:
-          username: mydockerhub-user
+          username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
     steps:
       - run:
           name: "Deploy to server"
           command: |
             echo "deploy call envoyer endpoint"
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
           
 workflows:
   version: 2
