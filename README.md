@@ -4,7 +4,7 @@ CircleCI CI/CD boilerplate for Laravel or PHP application. Modify based on your 
 # Config file
 `.circleci/config.yml`
 
-```
+```yaml
 version: 2.1
 orbs:
   slack: circleci/slack@4.1.1
