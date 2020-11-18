@@ -56,6 +56,18 @@ jobs:
               "text": "",
               "blocks": [
                 {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "${CIRCLE_BUILD_URL}"
+                    }
+                  ]
+                },
+                {
+                  "type": "divider"
+                },
+                {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
@@ -81,6 +93,9 @@ jobs:
                   ]
                 },
                 {
+                  "type": "divider"
+                },
+                {
                   "type": "actions",
                   "elements": [
                     {
@@ -96,10 +111,21 @@ jobs:
               ]
             }
       - slack/notify:
-          channel: 'C01EYA6QYSX'
           custom: |
             {
               "blocks": [
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "${CIRCLE_BUILD_URL}"
+                    }
+                  ]
+                },
+                {
+                  "type": "divider"
+                },
                 {
                   "type": "header",
                   "text": {
@@ -128,6 +154,9 @@ jobs:
                       "text": "*Build Number*:\n$CIRCLE_BUILD_NUM"
                     }
                   ]
+                },
+                {
+                  "type": "divider"
                 },
                 {
                   "type": "actions",
@@ -171,6 +200,18 @@ jobs:
               "text": "",
               "blocks": [
                 {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "${CIRCLE_BUILD_URL}"
+                    }
+                  ]
+                },
+                {
+                  "type": "divider"
+                },
+                {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
@@ -196,6 +237,9 @@ jobs:
                   ]
                 },
                 {
+                  "type": "divider"
+                },
+                {
                   "type": "actions",
                   "elements": [
                     {
@@ -216,6 +260,18 @@ jobs:
             {
               "text": "",
               "blocks": [
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "${CIRCLE_BUILD_URL}"
+                    }
+                  ]
+                },
+                {
+                  "type": "divider"
+                },
                 {
                   "type": "header",
                   "text": {
@@ -244,6 +300,9 @@ jobs:
                       "text": "*Build Number*:\n$CIRCLE_BUILD_NUM"
                     }
                   ]
+                },
+                {
+                  "type": "divider"
                 },
                 {
                   "type": "actions",
