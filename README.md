@@ -52,7 +52,7 @@ jobs:
           event: fail
           template: basic_fail_1
       - slack/notify:
-          channel: 'C01EYA6QYSX'
+          channel: 'your-slack-channel'
           custom: |
             {
               "blocks": [
