@@ -47,12 +47,13 @@ jobs:
       - run:
           name: "Run unit/feature testing"
           command: |
-            vendor/bin/phpunit --stop-on-failure --stop-on-error --debug
+            mkdir phpunit
+            vendor/bin/phpunit --stop-on-failure --stop-on-error --debug --log-junit phpunit/junit.xml tests
       - slack/notify:
           event: fail
           template: basic_fail_1
       - slack/notify:
-          channel: 'your-slack-channel'
+          channel: 'C01EYA6QYSX'
           custom: |
             {
               "blocks": [
@@ -103,7 +104,9 @@ jobs:
             }
           event: pass
       - store_test_results:
-          path: test-reports
+          path: phpunit
+      - store_artifacts:
+          path: phpunit
 
 
   # 2nd Job -- Deploy. Trigger envoyer link. Have to use envoyer for atomic and 0 downtime deployment.
@@ -145,5 +148,6 @@ workflows:
             branches:
               only:
                 - production
+
             
  ```           
