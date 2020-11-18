@@ -51,6 +51,57 @@ jobs:
       - slack/notify:
           event: fail
           template: basic_fail_1
+      - slack/notify:
+          channel: 'C01EYA6QYSX'
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Build Successful! :tada:",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Project*:\\n$CIRCLE_PROJECT_REPONAME"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*When*:\\n$(date +'%m/%d/%Y %T')"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Branch*:\\n$CIRCLE_BRANCH"
+                    }
+                  ],
+                  "accessory": {
+                      "type": "image",
+                      "image_url": "https://assets.brandfolder.com/otz5mn-bw4j2w-6jzqo8/original/circle-logo-badge-black.png",
+                      "alt_text": "CircleCI logo"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Job"
+                      },
+                      "url": "${CIRCLE_BUILD_URL}"
+                    }
+                  ]
+                }
+              ]
+            }
+          event: pass
       - store_test_results:
           path: test-reports
 
@@ -58,7 +109,7 @@ jobs:
   # 2nd Job -- Deploy. Trigger envoyer link. Have to use envoyer for atomic and 0 downtime deployment.
   app-deploy:
     docker:
-      - image: alpine:3.7
+      - image: cimg/base:2020.01
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
@@ -66,26 +117,33 @@ jobs:
       - run:
           name: "Deploy to server"
           command: |
+            sudo apt install curl
             echo "deploy call envoyer endpoint"
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
       - slack/notify:
           event: pass
           template: success_tagged_deploy_1
-          
+
 workflows:
   version: 2
-  my-workflow:
+  buil-test-deploy:
     jobs:
       - app-build:
           filters:
             branches:
-              ignore: 
-                - /hotfix-.*/ # do not trigger pipeline if it was "hotfix" branch
-            
+              ignore:
+                - /hotfix-.*/
+
       - app-deploy:
+          context:
+            - credentials
           requires:
             - app-build
           filters:
             branches:
-              only: production # only trigger this job(deploy) when branch checkout is "production"
+              only:
+                - production
             
  ```           
