@@ -76,11 +76,11 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commiter*:\\n${CIRCLE_USERNAME}"
+                      "text": "*Commiter*:\n${CIRCLE_USERNAME}"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*SHA*:\\n${CIRCLE_SHA1}"
+                      "text": "*SHA*:\n${CIRCLE_SHA1}"
                     },
                     {
                       "type": "mrkdwn",
@@ -137,6 +137,10 @@ jobs:
                 {
                   "type": "section",
                   "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Commiter*:\n${CIRCLE_USERNAME}"
+                    },
                     {
                       "type": "mrkdwn",
                       "text": "*Project*:\n$CIRCLE_PROJECT_REPONAME"
@@ -220,11 +224,11 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commiter*:\\n${CIRCLE_USERNAME}"
+                      "text": "*Commiter*:\n${CIRCLE_USERNAME}"
                     },
                     {
                       "type": "mrkdwn",
-                      "text": "*SHA*:\\n${CIRCLE_SHA1}"
+                      "text": "*SHA*:\n${CIRCLE_SHA1}"
                     },
                     {
                       "type": "mrkdwn",
@@ -284,12 +288,16 @@ jobs:
                   "type": "section",
                   "fields": [
                     {
-                        "type": "mrkdwn",
-                        "text": "*Project*:\\n$CIRCLE_PROJECT_REPONAME"
+                      "type": "mrkdwn",
+                      "text": "*Commiter*:\n${CIRCLE_USERNAME}"
                     },
                     {
                         "type": "mrkdwn",
-                        "text": "*When*:\\n$(date +'%m/%d/%Y %T')"
+                        "text": "*Project*:\n$CIRCLE_PROJECT_REPONAME"
+                    },
+                    {
+                        "type": "mrkdwn",
+                        "text": "*When*:\n$(date +'%m/%d/%Y %T')"
                     },
                     {
                       "type": "mrkdwn",
